@@ -9,11 +9,13 @@ Feriko helps groups track shared costs and work out who owes whom. It has two mo
 - **Personal trips** – travel with family or friends: log expenses, split them, settle up, attach shared photo-album links, and pin visited places to a personal travel **Passport**.
 - **Corporate ride pools** – colleagues sharing cabs or daily commutes split the costs of each ride pool.
 
+The project is a pnpm monorepo with an Express API, a Next.js web app and an Expo (React Native) mobile app.
+
+---
+
 ## Links
 
 - **Live Demo**: [https://feriko.onrender.com/](https://feriko.onrender.com/)
-
-The project is a pnpm monorepo with an Express API, a Next.js web app and an Expo (React Native) mobile app.
 
 ---
 
