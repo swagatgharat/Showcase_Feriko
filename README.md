@@ -166,12 +166,13 @@ Production runs as a **single Docker container** on Render:
 - A background scheduler (every 12 hours) prunes old notifications, sends 7-day reminders, deletes expired archived trips and erases accounts past their deletion grace period.
 
 ### CI/CD (`.github/workflows/deploy.yml`)
-On every push to `main`:
-1. Install dependencies, then run `check:syntax`, `lint` and `type-check`.
-2. Build a `linux/amd64` image and push it to GitHub Container Registry (`:latest` and `:<commit-sha>`).
-3. Trigger the Render deploy hook (`RENDER_DEPLOY_HOOK_URL` secret; skipped with a warning if not set).
+On every push to `main`, two jobs run in parallel:
+1. **Quality gates:** install the backend and website dependencies (not the mobile app's), then run `check:syntax`, `lint` and `type-check`.
+2. **Image:** build a `linux/amd64` image and push it to GitHub Container Registry as `:<commit-sha>`. Docker layers, pnpm's package store and the Next.js build cache (`.next/cache`, carried between runs) are cached, so later builds skip unchanged work.
 
-Pushes that change **only Markdown files** (`**/*.md`) or **only the mobile app** (`mobile/**`) do not run the pipeline. It can also be started manually (`workflow_dispatch`).
+When both pass, the **deploy** job moves `:latest` to that commit's image and triggers the Render deploy hook for that exact image (`RENDER_DEPLOY_HOOK_URL` secret; skipped with a warning if not set). An image that failed the checks is never deployed or tagged `:latest`.
+
+Pushes that only change Markdown files, the mobile app (`mobile/**`), editor settings, `.gitignore` or `docker-compose.yml` don't run the pipeline. It can also be started manually (`workflow_dispatch`).
 
 ### Android releases (`.github/workflows/mobile-release.yml`)
 The app is distributed as an APK from the website (`/download`), not through the Play Store. On every push to `main` that changes `mobile/**` (or manually, with optional release notes, a minimum supported version and a notify switch):
